@@ -8,9 +8,7 @@ import {
   IconAperture,
   IconSwitchHorizontal
 } from '@tabler/icons-react';
-import Head from 'next/head';
-import { promises as fs } from 'fs';
-import path from 'path';
+import axios from 'axios'
 
 const useStyles = createStyles((theme) => ({
   header: {
@@ -197,30 +195,38 @@ export default function Home() {
   const [listData, setListData] = useState([]);
 
   useEffect(()=>{
-    const newListData = [];
-    for(const d of apiData.torrents){
-      // data: {
-      //   title: string;
-      //   author: string;
-      //   year: number;
-      //   reviews: { positive: number; negative: number };
-      // }[];
-      let temp = {
-        hash: d.hash.substring(0,8),
-        title: d.name,
-        year: getReadableFileSizeString(d.size),
-        author: d.state === 'pausedUP'? 'completed' : d.state,
-        speed: formatSpeed(d.dlspeed),
-        reviews:{
-          positive: d.size - d.amount_left,
-          negative: d.amount_left
-        }
-      }
-      newListData.push(temp);
-    }
-
-    setListData(newListData);
+    setInterval(()=>{
+      let newListData = [];
+      axios.get('http://localhost:9000/api')
+      .then(function (response) {
+        newListData = JSON.parse(response.data);
   
+        for(const d of apiData.torrents){
+          // data: {
+          //   title: string;
+          //   author: string;
+          //   year: number;
+          //   reviews: { positive: number; negative: number };
+          // }[];
+          let temp = {
+            hash: d.hash.substring(0,8),
+            title: d.name,
+            year: getReadableFileSizeString(d.size),
+            author: d.state === 'pausedUP'? 'completed' : d.state,
+            speed: formatSpeed(d.dlspeed),
+            reviews:{
+              positive: d.size - d.amount_left,
+              negative: d.amount_left
+            }
+          }
+          newListData.push(temp);
+        }
+    
+        setListData(newListData);
+    })
+   
+    },1000)
+   
   },[])
 
   const links = data.map((item) => (
