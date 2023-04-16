@@ -11,6 +11,7 @@ import {
 import axios from 'axios'
 import { Registry } from './registry';
 import { Entities } from './entities';
+import { Platform } from './platform';
 
 const useStyles = createStyles((theme) => ({
   header: {
@@ -130,6 +131,13 @@ export default function Home() {
       <br/>
       <Entities/>
       </>
+      break;
+    case 'Platform':
+        tabToRender = 
+        <>
+        <Platform />
+        </>
+        break;
   }
 
 
