@@ -81,7 +81,7 @@ import axios from "axios";
             alias: torrent.name,
             real_size: torrent.size,
             size: getReadableFileSizeString(torrent.size),
-            author: torrent.state === 'pausedUP'? 'completed' : torrent.state,
+            mode: torrent.state === 'pausedUP'? 'completed' : torrent.state,
             speed: formatSpeed(torrent.dlspeed),
             progress : torrent.size - torrent.amount_left,
           }
