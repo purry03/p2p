@@ -67,7 +67,7 @@ export function Entities() {
               id: peer.id !== null ? peer.id : uuidv4(),
               ip: peer.host,
               port: peer.port,
-              last_flod: getTimeAgo(peer.time),
+              last_flood: getTimeAgo(peer.time),
             };
             newListData.push(temp);
           }
