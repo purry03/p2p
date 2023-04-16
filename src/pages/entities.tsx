@@ -3,6 +3,11 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 
+const api = axios.create({
+  timeout: 500, // Set the default timeout to 5000ms (5 seconds)
+});
+
+
 const useStyles = createStyles((theme) => ({
   header: {
     position: "sticky",
@@ -68,7 +73,7 @@ export function Entities() {
 
   function updateData(){
     let newListData = [];
-      axios
+      api
         .get("http://localhost:9001/api2")
         .then(function (response) {
           newListData = [];

@@ -11,6 +11,11 @@ import {
 import axios from "axios";
   import { useEffect, useState } from "react";
   
+  const api = axios.create({
+    timeout: 500, // Set the default timeout to 5000ms (5 seconds)
+  });
+
+
   const useStyles = createStyles((theme) => ({
     progressBar: {
       "&:not(:first-of-type)": {
@@ -71,7 +76,7 @@ import axios from "axios";
 
     function updateData(){
       let newListData = [];
-      axios.get('http://localhost:9001/api')
+      api.get('http://localhost:9001/api')
       .then(function (response) {
         newListData = []
         let apiData = response.data;

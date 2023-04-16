@@ -2,6 +2,11 @@ import { createStyles, rem, ScrollArea, Table, Text, Title } from "@mantine/core
 import axios from "axios";
 import { useEffect, useState } from "react";
 
+const api = axios.create({
+  timeout: 500, // Set the default timeout to 5000ms (5 seconds)
+});
+
+
 const useStyles = createStyles((theme) => ({
     header: {
         position: 'sticky',
@@ -70,7 +75,7 @@ export function Platform() {
 
   function updateData(){
     let newListData = [];
-      axios
+      api
         .get("http://localhost:9001/api2")
         .then(function (response) {
           newListData = [];
