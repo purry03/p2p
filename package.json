@@ -30,5 +30,8 @@
     "tabler-icons-react": "^1.56.0",
     "typescript": "5.0.4",
     "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "@types/uuid": "^9.0.1"
   }
 }

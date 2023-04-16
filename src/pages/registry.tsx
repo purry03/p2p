@@ -103,12 +103,12 @@ import axios from "axios";
               {row.alias}
             </Anchor>
           </td>
-          <td>{row.mode}</td>
+          <td>{row.size}</td>
           <td>
             {" "}
             <Anchor component="button" fz="sm">
               {" "}
-              {row.size}{" "}
+              {row.mode}{" "}
             </Anchor>
           </td>
           <td>{row.speed}</td>
