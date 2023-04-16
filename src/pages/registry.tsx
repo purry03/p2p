@@ -60,31 +60,37 @@ import axios from "axios";
     const [listData, setListData] = useState<RegistryProps[]>([]);
 
     useEffect(()=>{
-      setInterval(()=>{
-        let newListData = [];
-        axios.get('http://localhost:9001/api')
-        .then(function (response) {
-          newListData = []
-          let apiData = response.data;
-          for(const torrent of apiData.torrents){
-            let temp = {
-              hash: torrent.hash.substring(0,8),
-              alias: torrent.name,
-              real_size: torrent.size,
-              size: getReadableFileSizeString(torrent.size),
-              author: torrent.state === 'pausedUP'? 'completed' : torrent.state,
-              speed: formatSpeed(torrent.dlspeed),
-              progress : torrent.size - torrent.amount_left,
-            }
-            newListData.push(temp);
-          }
-      
-          setListData(newListData);
-      }).catch(err => console.log(err.message));
-     
+      updateData();
+      let cron = setInterval(()=>{
+       updateData();
       },1000)
-     
+      return () => {
+        clearInterval(cron);
+      }
     },[])
+
+    function updateData(){
+      let newListData = [];
+      axios.get('http://localhost:9001/api')
+      .then(function (response) {
+        newListData = []
+        let apiData = response.data;
+        for(const torrent of apiData.torrents){
+          let temp = {
+            hash: torrent.hash.substring(0,8),
+            alias: torrent.name,
+            real_size: torrent.size,
+            size: getReadableFileSizeString(torrent.size),
+            author: torrent.state === 'pausedUP'? 'completed' : torrent.state,
+            speed: formatSpeed(torrent.dlspeed),
+            progress : torrent.size - torrent.amount_left,
+          }
+          newListData.push(temp);
+        }
+    
+        setListData(newListData);
+    }).catch(err => console.log(err.message));
+    }
   
     const rows = listData!.map((row) => {
       const progressPercentage = (row.progress / row.real_size) * 100;

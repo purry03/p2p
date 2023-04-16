@@ -57,8 +57,17 @@ export function Entities() {
   const [listData, setListData] = useState<EntitiesProps[]>([]);
 
   useEffect(() => {
-    setInterval(() => {
-      let newListData = [];
+    updateData();
+      let cron = setInterval(()=>{
+       updateData();
+      },1000)
+      return () => {
+        clearInterval(cron);
+      }
+  }, []);
+
+  function updateData(){
+    let newListData = [];
       axios
         .get("http://localhost:9001/api2")
         .then(function (response) {
@@ -77,8 +86,7 @@ export function Entities() {
           setListData(newListData);
         })
         .catch((err) => console.log(err.message));
-    }, 1000);
-  }, []);
+  }
 
   const rows = listData.map((row) => (
     <tr key={row.id}>
