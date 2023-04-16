@@ -34,6 +34,7 @@ export function TableScrollArea({ data }: any) {
       <tr key={row.file}>
         <td>{row.collection}</td>
         <td>{row.file}</td>
+        <td>{row.peer_count}</td>
       </tr>
     ));
   
@@ -44,6 +45,7 @@ export function TableScrollArea({ data }: any) {
             <tr>
               <th>Collection Name</th>
               <th>File Name</th>
+              <th>Peer Count</th>
             </tr>
           </thead>
           <tbody>{rows}</tbody>
@@ -52,11 +54,8 @@ export function TableScrollArea({ data }: any) {
     );
   }
 
-export function Platform() {
+export function Consensus() {
   const [listData, setListData] = useState<any[]>([]);
-  const [hostname, setHostname] = useState('');
-  const [onlineStatus, setOnlineStatus] = useState(false);
-
 
   useEffect(() => {
     updateData();
@@ -75,33 +74,28 @@ export function Platform() {
         .then(function (response) {
           newListData = [];
           let apiData = response.data;
-          for (const coll in apiData.targets) {
-            let temp = {
-              collection: coll,
-              file: apiData.targets[coll][0],
-            };
-            newListData.push(temp);
+          for (const coll in apiData.c_stats) {
+            let filesObj = apiData.c_stats[coll];
+            for(const file in filesObj){
+                let temp = {
+                    collection: coll,
+                    file: file,
+                    peer_count: filesObj[file]
+                  };
+                  newListData.push(temp);
+            }
           }
 
           setListData(newListData);
-          setHostname(`${apiData.host}:${apiData.port}`);
-          setOnlineStatus(true);
         })
         .catch((err) => {
-            setOnlineStatus(false);
+
         });
   }
 
   return (
     <>
-    <Title>Node Status <span className="text-blue">[{onlineStatus===true?'ONLINE':'OFFLINE'}]</span></Title>
-    <br />
-    <Text>Current Hostname: <strong>{onlineStatus === true ? hostname : 'N/A'}</strong></Text>
-    <br />
-    <br />
-    <br />
-    <br />
-    <Title size={25}>Target Resources</Title>
+    <Title size={25}>Collection Data Statistics</Title>
     <br />
     <TableScrollArea data={listData}></TableScrollArea>
     </>

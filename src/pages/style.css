@@ -31,6 +31,5 @@ a {
 }
 
 .text-blue{
-  color : #09415e;
-  font-size: 1.5rem;
+  color : rgb(var(--foreground-rgb));
 }
