@@ -39,7 +39,9 @@ interface EntitiesProps {
 
 function getTimeAgo(epochTime: number) {
   const now = Math.floor(Date.now() / 1000); // Current time in seconds
-  const elapsedSeconds = now - epochTime; // Elapsed time in seconds
+  let elapsedSeconds = now - epochTime; // Elapsed time in seconds
+
+  elapsedSeconds= Math.abs(elapsedSeconds);
 
   if (elapsedSeconds < 60) {
     return `${elapsedSeconds.toFixed(0)} seconds ago`; // Display seconds ago
