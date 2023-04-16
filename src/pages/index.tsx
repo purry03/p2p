@@ -9,6 +9,7 @@ import {
   IconSwitchHorizontal
 } from '@tabler/icons-react';
 import axios from 'axios'
+import { Registry } from './registry';
 
 const useStyles = createStyles((theme) => ({
   header: {
@@ -74,76 +75,31 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-interface TableReviewsProps {
-  data: {
-    hash: string,
-    title: string;
-    author: string;
-    year: number;
-    speed: string,
-    reviews: { positive: number; negative: number };
-  }[];
+
+interface TableScrollAreaProps {
+  data: { name: string; email: string; company: string }[];
 }
 
-export function TableReviews({ data }: TableReviewsProps) {
-  const { classes, theme } = useStyles();
+export function TableScrollArea({ data }: TableScrollAreaProps) {
+  const { classes, cx } = useStyles();
+  const [scrolled, setScrolled] = useState(false);
 
-  const rows = data.map((row) => {
-    const totalReviews = row.reviews.negative + row.reviews.positive;
-    const positiveReviews = (row.reviews.positive / totalReviews) * 100;
-    const negativeReviews = (row.reviews.negative / totalReviews) * 100;
-
-    return (
-      <tr key={row.title}>
-        <td>
-         
-            {row.hash}
-        </td>
-        <td>
-        <Anchor component="button" fz="sm">
-{row.title}
-</Anchor>
-</td>
-        <td>
-            {row.year}
-        </td>
-        <td>        <Anchor component="button" fz="sm">     {row.author} </Anchor>
-</td>
-<td>
-            {row.speed}
-          </td>
-        <td>
-          
-          <Group position="apart">
-            <Text fz="xs" c="teal" weight={700}>
-              {positiveReviews.toFixed(0)}%
-            </Text>
-          </Group>
-          <Progress
-            classNames={{ bar: classes.progressBar }}
-            sections={[
-              {
-                value: positiveReviews,
-                color: theme.colorScheme === 'dark' ? theme.colors.teal[9] : theme.colors.teal[6],
-              }
-            ]}
-          />
-        </td>
-      </tr>
-    );
-  });
+  const rows = data.map((row) => (
+    <tr key={row.name}>
+      <td>{row.name}</td>
+      <td>{row.email}</td>
+      <td>{row.company}</td>
+    </tr>
+  ));
 
   return (
-    <ScrollArea>
-      <Table sx={{ minWidth: 800 }} verticalSpacing="xs">
-        <thead>
+    <ScrollArea h={300} onScrollPositionChange={({ y }) => setScrolled(y !== 0)}>
+      <Table miw={700}>
+        <thead className={cx(classes.header, { [classes.scrolled]: scrolled })}>
           <tr>
-            <th>Hash</th>
-            <th>Alias</th>
-            <th>Digital Footprint</th>
-            <th>Operational Mode</th>
-            <th>Download Speed</th>
-            <th>Data Acquisition Progress</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Company</th>
           </tr>
         </thead>
         <tbody>{rows}</tbody>
@@ -191,7 +147,8 @@ export default function Home() {
   const { classes, cx } = useStyles();
   const [active, setActive] = useState('Billing');
   const [listData, setListData] = useState([]);
-
+  const [tab,setTab] = useState('');
+   
   useEffect(()=>{
     setInterval(()=>{
       let newListData = [];
@@ -199,29 +156,21 @@ export default function Home() {
       .then(function (response) {
         newListData = []
         let apiData = response.data;
-        for(const d of apiData.torrents){
-          // data: {
-          //   title: string;
-          //   author: string;
-          //   year: number;
-          //   reviews: { positive: number; negative: number };
-          // }[];
+        for(const torrent of apiData.torrents){
           let temp = {
-            hash: d.hash.substring(0,8),
-            title: d.name,
-            year: getReadableFileSizeString(d.size),
-            author: d.state === 'pausedUP'? 'completed' : d.state,
-            speed: formatSpeed(d.dlspeed),
-            reviews:{
-              positive: d.size - d.amount_left,
-              negative: d.amount_left
-            }
+            hash: torrent.hash.substring(0,8),
+            alias: torrent.name,
+            real_size: torrent.size,
+            size: getReadableFileSizeString(torrent.size),
+            author: torrent.state === 'pausedUP'? 'completed' : torrent.state,
+            speed: formatSpeed(torrent.dlspeed),
+            progress : torrent.size - torrent.amount_left,
           }
           newListData.push(temp);
         }
     
         setListData(newListData);
-    })
+    }).catch(err => console.log(err.message));
    
     },1000)
    
@@ -235,12 +184,34 @@ export default function Home() {
       onClick={(event) => {
         event.preventDefault();
         setActive(item.label);
+        setTab(item.label)
       }}
     >
       <item.icon className={classes.linkIcon} stroke={1.5} />
       <span>{item.label}</span>
     </a>
   ));
+
+  let tabToRender = null;
+
+  switch(tab){
+    case 'Swarm-Based File Registry':
+      tabToRender = 
+      <>
+      <Title size={35}>Swarm-Based File Registry</Title>
+      <br/>
+      <Registry data={listData} />
+      </>
+      break;
+    case 'Connected Entities':
+      tabToRender = 
+      <>
+      <Title size={35}>Connected Entities</Title>
+      <br/>
+      <TableScrollArea data={[]} />
+      </>
+  }
+
 
   return (
     <div className='container'> 
@@ -271,9 +242,7 @@ export default function Home() {
       </Navbar.Section>
     </Navbar>
     <div className='main'>
-      <Title size={35}>Swarm-Based File Registry</Title>
-      <br></br>
-      <TableReviews data={listData} />
+     {tabToRender}
     </div>
     </div>
   );
