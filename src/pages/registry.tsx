@@ -66,7 +66,7 @@ import axios from "axios";
         .then(function (response) {
           newListData = []
           let apiData = response.data;
-          for(const peer of apiData.peers){
+          for(const torrent of apiData.torrents){
             let temp = {
               hash: torrent.hash.substring(0,8),
               alias: torrent.name,
