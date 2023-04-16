@@ -37,7 +37,7 @@ interface EntitiesProps {
   last_flood: string;
 }
 
-function getTimeAgo(epochTime) {
+function getTimeAgo(epochTime: number) {
   const now = Math.floor(Date.now() / 1000); // Current time in seconds
   const elapsedSeconds = now - epochTime; // Elapsed time in seconds
 
@@ -67,7 +67,7 @@ export function Entities() {
               id: peer.id !== null ? peer.id : uuidv4(),
               ip: peer.host,
               port: peer.port,
-              last_updated: getTimeAgo(peer.time),
+              last_flod: getTimeAgo(peer.time),
             };
             newListData.push(temp);
           }
