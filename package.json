@@ -23,10 +23,12 @@
     "eslint": "8.38.0",
     "eslint-config-next": "13.3.0",
     "fs": "^0.0.1-security",
+    "nanoid": "^4.0.2",
     "next": "13.3.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "tabler-icons-react": "^1.56.0",
-    "typescript": "5.0.4"
+    "typescript": "5.0.4",
+    "uuid": "^9.0.0"
   }
 }

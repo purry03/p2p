@@ -10,6 +10,7 @@ import {
 } from '@tabler/icons-react';
 import axios from 'axios'
 import { Registry } from './registry';
+import { Entities } from './entities';
 
 const useStyles = createStyles((theme) => ({
   header: {
@@ -76,38 +77,6 @@ const useStyles = createStyles((theme) => ({
 }));
 
 
-interface TableScrollAreaProps {
-  data: { name: string; email: string; company: string }[];
-}
-
-export function TableScrollArea({ data }: TableScrollAreaProps) {
-  const { classes, cx } = useStyles();
-  const [scrolled, setScrolled] = useState(false);
-
-  const rows = data.map((row) => (
-    <tr key={row.name}>
-      <td>{row.name}</td>
-      <td>{row.email}</td>
-      <td>{row.company}</td>
-    </tr>
-  ));
-
-  return (
-    <ScrollArea h={300} onScrollPositionChange={({ y }) => setScrolled(y !== 0)}>
-      <Table miw={700}>
-        <thead className={cx(classes.header, { [classes.scrolled]: scrolled })}>
-          <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Company</th>
-          </tr>
-        </thead>
-        <tbody>{rows}</tbody>
-      </Table>
-    </ScrollArea>
-  );
-}
-
 
 
 const data = [
@@ -118,63 +87,14 @@ const data = [
   { link: '', label: 'Consensus-Based Data Network', icon: IconAperture },
 ];
 
-function getReadableFileSizeString(fileSizeInBytes: number) {
-  var i = -1;
-  var byteUnits = [' kB', ' MB', ' GB', ' TB', 'PB', 'EB', 'ZB', 'YB'];
-  do {
-    fileSizeInBytes /= 1024;
-    i++;
-  } while (fileSizeInBytes > 1024);
-
-  return Math.max(fileSizeInBytes, 0.1).toFixed(1) + byteUnits[i];
-}
-
-function formatSpeed(speedInBytesPerSecond: number) {
-  const units = ['B/s', 'KB/s', 'MB/s', 'GB/s', 'TB/s'];
-  let speed = speedInBytesPerSecond;
-  let unitIndex = 0;
-  
-  while (speed >= 1024 && unitIndex < units.length - 1) {
-    speed /= 1024;
-    unitIndex++;
-  }
-  
-  return speed.toFixed(2) + ' ' + units[unitIndex];
-}
 
 
 export default function Home() {
   const { classes, cx } = useStyles();
   const [active, setActive] = useState('Billing');
-  const [listData, setListData] = useState([]);
   const [tab,setTab] = useState('');
    
-  useEffect(()=>{
-    setInterval(()=>{
-      let newListData = [];
-      axios.get('http://localhost:9001/api')
-      .then(function (response) {
-        newListData = []
-        let apiData = response.data;
-        for(const torrent of apiData.torrents){
-          let temp = {
-            hash: torrent.hash.substring(0,8),
-            alias: torrent.name,
-            real_size: torrent.size,
-            size: getReadableFileSizeString(torrent.size),
-            author: torrent.state === 'pausedUP'? 'completed' : torrent.state,
-            speed: formatSpeed(torrent.dlspeed),
-            progress : torrent.size - torrent.amount_left,
-          }
-          newListData.push(temp);
-        }
-    
-        setListData(newListData);
-    }).catch(err => console.log(err.message));
-   
-    },1000)
-   
-  },[])
+ 
 
   const links = data.map((item) => (
     <a
@@ -200,7 +120,7 @@ export default function Home() {
       <>
       <Title size={35}>Swarm-Based File Registry</Title>
       <br/>
-      <Registry data={listData} />
+      <Registry/>
       </>
       break;
     case 'Connected Entities':
@@ -208,7 +128,7 @@ export default function Home() {
       <>
       <Title size={35}>Connected Entities</Title>
       <br/>
-      <TableScrollArea data={[]} />
+      <Entities/>
       </>
   }
 
