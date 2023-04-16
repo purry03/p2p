@@ -156,7 +156,7 @@ export function Consensus() {
     <Title size={25}>Collection Data Statistics</Title>
     <br />
     <TableScrollArea data={listData}></TableScrollArea>
-    <br /><br />
+    <br />
     <Title size={25}>Cross-Peer File Repository</Title>
     <br />
     <TableScrollArea2 data={listData2}></TableScrollArea2>
