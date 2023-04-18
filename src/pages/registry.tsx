@@ -12,7 +12,7 @@ import axios from "axios";
   import { useEffect, useState } from "react";
   
   const api = axios.create({
-    timeout: 500, // Set the default timeout to 5000ms (5 seconds)
+    timeout: 1500, // Set the default timeout to 5000ms (5 seconds)
   });
 
 

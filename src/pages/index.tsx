@@ -25,6 +25,7 @@ import { Registry } from "./registry";
 import { Entities } from "./entities";
 import { Platform } from "./platform";
 import { Consensus } from "./consensus";
+import { Analytics } from "./analytics";
 
 const useStyles = createStyles((theme) => ({
   header: {
@@ -137,6 +138,13 @@ export default function Home() {
   let tabToRender = null;
 
   switch (tab) {
+    case "Analytics Center":
+      tabToRender = (
+        <>
+          <Analytics />
+        </>
+      )
+      break;
     case "Swarm-Based File Registry":
       tabToRender = (
         <>
@@ -188,6 +196,7 @@ export default function Home() {
         .main{
           padding: 100px;
           width: 100%;
+          overflow-y: auto;
         }
       `}
       </style>

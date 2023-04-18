@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 
 const api = axios.create({
-  timeout: 500, // Set the default timeout to 5000ms (5 seconds)
+  timeout: 1500, // Set the default timeout to 5000ms (5 seconds)
 });
 
 

@@ -1,9 +1,14 @@
 import { createStyles, rem, ScrollArea, Table, Text, Title } from "@mantine/core";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import Chart from 'chart.js/auto';
+import {CategoryScale} from 'chart.js'; 
+Chart.register(CategoryScale);
+
+import {Line} from 'react-chartjs-2'
 
 const api = axios.create({
-  timeout: 500, // Set the default timeout to 5000ms (5 seconds)
+  timeout: 1500, // Set the default timeout to 5000ms (5 seconds)
 });
 
 
@@ -43,7 +48,7 @@ export function TableScrollArea({ data }: any) {
     ));
   
     return (
-      <ScrollArea h={300} onScrollPositionChange={({ y }) => setScrolled(y !== 0)}>
+      <ScrollArea onScrollPositionChange={({ y }) => setScrolled(y !== 0)}>
         <Table miw={700}>
           <thead className={cx(classes.header, { [classes.scrolled]: scrolled })}>
             <tr>
@@ -97,6 +102,32 @@ export function Platform() {
         });
   }
 
+
+  const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
+
+  const data = {
+    labels,
+    datasets: [
+      {
+        data: labels.map(() => Math.random()*100),
+        borderColor: 'rgb(255, 99, 132)',
+        backgroundColor: 'rgba(255, 99, 132, 0.5)',
+      }
+    ],
+  };
+
+  const options = {
+    responsive: true,
+    plugins: {
+      legend: {
+        display: false
+      },
+      title: {
+        display: false,
+      },
+    },
+  };
+
   return (
     <>
     <Title>Node Status <span className="text-blue">[{onlineStatus===true?'ONLINE':'OFFLINE'}]</span></Title>
@@ -109,6 +140,15 @@ export function Platform() {
     <Title size={25}>Target Resources</Title>
     <br />
     <TableScrollArea data={listData}></TableScrollArea>
+    <br />
+    <br />
+    <br />
+    <br />
+    <Title size={25}>System Resources</Title>
+    <br />
+    <br />
+    <br />
+    <Line options={options} data={data}/>
     </>
   );
 }
