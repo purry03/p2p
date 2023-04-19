@@ -1,7 +1,7 @@
 import { createStyles, rem, ScrollArea, Table } from "@mantine/core";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { v4 as uuidv4 } from "uuid";
+import sha256 from 'sha256';
 
 const api = axios.create({
   timeout: 1500, // Set the default timeout to 5000ms (5 seconds)
@@ -22,11 +22,10 @@ const useStyles = createStyles((theme) => ({
       left: 0,
       right: 0,
       bottom: 0,
-      borderBottom: `${rem(1)} solid ${
-        theme.colorScheme === "dark"
-          ? theme.colors.dark[3]
-          : theme.colors.gray[2]
-      }`,
+      borderBottom: `${rem(1)} solid ${theme.colorScheme === "dark"
+        ? theme.colors.dark[3]
+        : theme.colors.gray[2]
+        }`,
     },
   },
 
@@ -46,7 +45,7 @@ function getTimeAgo(epochTime: number) {
   const now = Math.floor(Date.now() / 1000); // Current time in seconds
   let elapsedSeconds = now - epochTime; // Elapsed time in seconds
 
-  elapsedSeconds= Math.abs(elapsedSeconds);
+  elapsedSeconds = Math.abs(elapsedSeconds);
 
   if (elapsedSeconds < 60) {
     return `${elapsedSeconds.toFixed(0)} seconds ago`; // Display seconds ago
@@ -63,34 +62,34 @@ export function Entities() {
 
   useEffect(() => {
     updateData();
-      let cron = setInterval(()=>{
-       updateData();
-      },1000)
-      return () => {
-        clearInterval(cron);
-      }
+    let cron = setInterval(() => {
+      updateData();
+    }, 1000)
+    return () => {
+      clearInterval(cron);
+    }
   }, []);
 
-  function updateData(){
+  function updateData() {
     let newListData = [];
-      api
-        .get("http://localhost:9001/api2")
-        .then(function (response) {
-          newListData = [];
-          let apiData = response.data;
-          for (const peer of apiData.peers) {
-            let temp = {
-              id: peer.id !== null ? peer.id : uuidv4(),
-              ip: peer.host,
-              port: peer.port,
-              last_flood: getTimeAgo(peer.time),
-            };
-            newListData.push(temp);
-          }
+    api
+      .get("http://localhost:9001/api2")
+      .then(function (response) {
+        newListData = [];
+        let apiData = response.data;
+        for (const peer of apiData.peers) {
+          let temp = {
+            id: sha256(peer.host + peer.port).substring(0, 32),
+            ip: peer.host,
+            port: peer.port,
+            last_flood: getTimeAgo(peer.time),
+          };
+          newListData.push(temp);
+        }
 
-          setListData(newListData);
-        })
-        .catch((err) => console.log(err.message));
+        setListData(newListData);
+      })
+      .catch((err) => console.log(err.message));
   }
 
   const rows = listData.map((row) => (
